@@ -11,12 +11,19 @@ def frac(a, b):
 
 def clean_fractions(text):
     text = re.sub("¼", frac(1, 4), text)
+    text = re.sub("1( |)/4", frac(1, 4), text)
     text = re.sub("⅓", frac(1, 3), text)
+    text = re.sub("1( |)/3", frac(1, 3), text)
     text = re.sub("½", frac(1, 2), text)
+    text = re.sub("1( |)/2", frac(1, 2), text)
     text = re.sub("⅔", frac(2, 3), text)
+    text = re.sub("2( |)/3", frac(2, 3), text)
     text = re.sub('¾', frac(3, 4), text)
+    text = re.sub("3( |)/4", frac(3, 4), text)
     text = re.sub('⅛', frac(1, 8), text)
+    text = re.sub("1( |)/8", frac(1, 8), text)
     text = re.sub('⅜', frac(3, 8), text)
+    text = re.sub("3( |)/8", frac(3, 8), text)
     return text
 
 def clean_degrees(text):

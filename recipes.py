@@ -94,16 +94,20 @@ class Recipe:
             instructions = [item.text for item in preparation_tag.parent.find_all('p')]
             if len(step_numbers) != len(instructions):
                 for i, inst in enumerate(instructions):
-                    if re.search("Do ahead: ", inst, flags=re.IGNORECASE):
-                        instructions[i] = re.split("Do ahead: ", instructions[i], flags=re.IGNORECASE)[1]
+                    if re.match("Do ahead: ", inst, flags=re.IGNORECASE):
+                        instructions[i] = re.split("Do ahead: ", inst, flags=re.IGNORECASE)[1]
                         step_numbers.insert(i, "Do ahead")
                     else:
                         pass
             else:
                 for i, inst in enumerate(instructions):
-                    if re.search("Do ahead: ", inst, flags=re.IGNORECASE):
-                        instructions[i] = re.split("Do ahead: ", instructions[i], flags=re.IGNORECASE)[1]
+                    if re.match("Do ahead: ", inst, flags=re.IGNORECASE):
+                        instructions[i] = re.split("Do ahead: ", inst, flags=re.IGNORECASE)[1]
                         step_numbers[i] = "Do ahead"
+                    elif re.search("Do ahead: ", inst, flags=re.IGNORECASE):
+                        instructions[i] = re.split("Do ahead: ", inst, flags=re.IGNORECASE)[0]
+                        instructions.insert(i+1, re.split("Do ahead: ", inst, flags=re.IGNORECASE)[1])
+                        step_numbers.insert(i+1, "Do ahead")
                     else:
                         pass
             instructions = [clean_text(x) for x in instructions]
