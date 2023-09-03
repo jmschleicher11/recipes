@@ -16,6 +16,7 @@ def clean_fractions(text):
     text = re.sub("⅔", frac(2, 3), text)
     text = re.sub('¾', frac(3, 4), text)
     text = re.sub('⅛', frac(1, 8), text)
+    text = re.sub('⅜', frac(3, 8), text)
     return text
 
 def clean_degrees(text):

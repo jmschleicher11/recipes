@@ -8,6 +8,7 @@ def clean_text(text):
     text = re.sub('\xa0', '', text)
     text = text.split("Editor’s note: ")[0]
     text = text.strip()
+    text = re.sub(' {2,}', ' ', text)
     return text
 
 class Recipe:
@@ -31,7 +32,6 @@ class Recipe:
         self.food_list = None
         self.steps = None
         self.instructions = None
-        self.image = None
         self.pull_data()
 
     def pull_data(self):
@@ -55,14 +55,14 @@ class Recipe:
         """
         Extract recipe from bon appetit html
         """
-        self.title = self.soup.title.text.split(' | ')[0]
+        self.title = clean_text(self.soup.title.text.split(' | ')[0])
 
         # Get active and total times
         for i in range(len(self.soup.find_all('p'))):
             if self.soup.find_all('p')[i].text == 'Active Time':
-                self.active_time = self.soup.find_all('p')[i+1].text
+                self.active_time = clean_text(self.soup.find_all('p')[i+1].text)
             elif self.soup.find_all('p')[i].text == 'Total Time':
-                self.total_time = self.soup.find_all('p')[i+1].text
+                self.total_time = clean_text(self.soup.find_all('p')[i+1].text)
 
         # Pull ingredients & preparations tags
         ingredients_tag = None
@@ -78,7 +78,7 @@ class Recipe:
 
         # Create ingredients list
         if ingredients_tag:
-            self.servings = ingredients_tag.parent.find_all('p')[0].text
+            self.servings = clean_text(ingredients_tag.parent.find_all('p')[0].text)
             amounts = ingredients_tag.parent.find_all('p')[1:]
             amounts_list = [i.contents[0] if len(i)>0 else None for i in amounts]
             ingredients = ingredients_tag.parent.find_all('div')[1:]
@@ -97,6 +97,13 @@ class Recipe:
                     if re.search("Do ahead: ", inst, flags=re.IGNORECASE):
                         instructions[i] = re.split("Do ahead: ", instructions[i], flags=re.IGNORECASE)[1]
                         step_numbers.insert(i, "Do ahead")
+                    else:
+                        pass
+            else:
+                for i, inst in enumerate(instructions):
+                    if re.search("Do ahead: ", inst, flags=re.IGNORECASE):
+                        instructions[i] = re.split("Do ahead: ", instructions[i], flags=re.IGNORECASE)[1]
+                        step_numbers[i] = "Do ahead"
                     else:
                         pass
             instructions = [clean_text(x) for x in instructions]
