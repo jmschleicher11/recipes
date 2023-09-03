@@ -93,8 +93,12 @@ class Recipe:
             step_numbers = [item.contents[0] for item in preparation_tag.parent.find_all('h4')]
             instructions = [item.text for item in preparation_tag.parent.find_all('p')]
             if len(step_numbers) != len(instructions):
-                instructions[-1] = re.split("Do ahead: ", instructions[-1], flags=re.IGNORECASE)[1]
-                step_numbers.append("Do ahead")
+                for i, inst in enumerate(instructions):
+                    if re.search("Do ahead: ", inst, flags=re.IGNORECASE):
+                        instructions[i] = re.split("Do ahead: ", instructions[i], flags=re.IGNORECASE)[1]
+                        step_numbers.insert(i, "Do ahead")
+                    else:
+                        pass
             instructions = [clean_text(x) for x in instructions]
             self.steps = step_numbers
             self.instructions = instructions
