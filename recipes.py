@@ -134,7 +134,10 @@ class Recipe:
         servings_text = servings_tag.find_all('span',
                                               class_=re.compile('pantry--ui ingredients_fontOverride_*'))[0].text
         if re.search(r'\d+$', servings_text):
-            self.servings = servings_text + 'Servings'
+            if re.search('serv(es|ings)', servings_text, re.IGNORECASE):
+                self.servings = servings_text
+            else:
+                self.servings = servings_text + ' Servings'
         else:
             self.servings = servings_text
 

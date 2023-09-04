@@ -117,6 +117,75 @@ class BonAppetitTesting(unittest.TestCase):
         os.remove(pancake_image_file)
         os.remove(aloo_image_file)
 
+class NYTimesCookingTesting(unittest.TestCase):
+    @classmethod
+    def setUpClass(self):
+        self.pasta = Recipe('https://cooking.nytimes.com/recipes/1023328-pasta-salad')
+        time.sleep(random.randrange(1, 6) + random.random())
+        self.dutch_bb = Recipe('https://cooking.nytimes.com/recipes/1024286-goat-cheese-and-dill-dutch-baby')
+        time.sleep(random.randrange(1, 6) + random.random())
+        self.soup = Recipe(
+            'https://cooking.nytimes.com/recipes/1857-thomas-kellers-butternut-squash-soup-with-brown-butter')
+        time.sleep(random.randrange(1, 6) + random.random())
+
+    def test_url(self):
+        self.assertEqual(self.pasta.url, 'https://cooking.nytimes.com/recipes/1023328-pasta-salad')
+        self.assertEqual(self.dutch_bb.url,
+                         'https://cooking.nytimes.com/recipes/1024286-goat-cheese-and-dill-dutch-baby')
+        self.assertEqual(self.soup.url,
+                         'https://cooking.nytimes.com/recipes/1857-thomas-kellers-butternut-squash-soup-with-brown-butter')
+
+    def test_source(self):
+        self.assertEqual(self.pasta.source, 'New York Times Cooking')
+        self.assertEqual(self.dutch_bb.source, 'New York Times Cooking')
+        self.assertEqual(self.soup.source, 'New York Times Cooking')
+
+    def test_title(self):
+        self.assertEqual(self.pasta.title, 'Pasta Salad')
+        self.assertEqual(self.dutch_bb.title, 'Goat Cheese and Dill Dutch Baby')
+        self.assertEqual(self.soup.title, 'Thomas Keller’s Butternut Squash Soup With Brown Butter')
+
+    def test_times(self):
+        self.assertIsNone(self.pasta.active_time)
+        self.assertEqual(self.pasta.total_time, '30 minutes')
+        self.assertIsNone(self.dutch_bb.active_time)
+        self.assertEqual(self.dutch_bb.total_time, '45 minutes')
+        self.assertIsNone(self.soup.active_time)
+        self.assertEqual(self.soup.total_time, '2 hours 15 minutes, plus refrigeration')
+
+    def test_servings(self):
+        self.assertEqual(self.pasta.servings, '8 to 10 Servings')
+        self.assertEqual(self.dutch_bb.servings, '6 servings')
+        self.assertEqual(self.soup.servings, 'Serves 6')
+
+    def test_ingredients_list(self):
+        self.assertEqual(len(self.pasta.ingredients), 13)
+        self.assertEqual(len(self.dutch_bb.ingredients), 12)
+        self.assertEqual(len(self.soup.ingredients), 17)
+
+    def test_do_ahead_handling_in_steps(self):
+        self.assertEqual(self.pasta.steps, ['Step 1', 'Step 2', 'Step 3', 'Step 4'])
+        self.assertEqual(self.dutch_bb.steps, ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5'])
+        self.assertEqual(self.soup.steps,
+                         ['Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7'])
+
+    def test_steps_instructions_same_len(self):
+        self.assertEqual(len(self.pasta.steps), len(self.pasta.instructions))
+        self.assertEqual(len(self.dutch_bb.steps), len(self.dutch_bb.instructions))
+        self.assertEqual(len(self.soup.steps), len(self.soup.instructions))
+
+    def test_image_and_delete(self):
+        pasta_image_file = os.path.join(os.getcwd(), 'pdfs', self.pasta.title + '.png')
+        dutch_bb_image_file = os.path.join(os.getcwd(), 'pdfs', self.dutch_bb.title + '.png')
+        soup_image_file = os.path.join(os.getcwd(), 'pdfs', self.soup.title + '.png')
+
+        self.assertTrue(os.path.isfile(pasta_image_file))
+        self.assertTrue(os.path.isfile(dutch_bb_image_file))
+        self.assertTrue(os.path.isfile(soup_image_file))
+
+        os.remove(pasta_image_file)
+        os.remove(dutch_bb_image_file)
+        os.remove(soup_image_file)
 
 if __name__ == '__main__':
     unittest.main()

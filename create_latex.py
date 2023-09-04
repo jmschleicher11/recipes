@@ -29,9 +29,13 @@ def clean_fractions(text):
 def clean_degrees(text):
     return re.sub("˚", r"$\\degree$", text)
 
+def clean_pound(text):
+    return re.sub("#", r"\\#", text)
+
 def create_latex_friendly_text(text):
     text = clean_fractions(text)
     text = clean_degrees(text)
+    text = clean_pound(text)
     return text
 
 def generate_latex(recipe):
