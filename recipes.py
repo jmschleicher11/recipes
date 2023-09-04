@@ -78,7 +78,10 @@ class Recipe:
 
         # Create ingredients list
         if ingredients_tag:
-            self.servings = clean_text(ingredients_tag.parent.find_all('p')[0].text)
+            if len(ingredients_tag.parent.find_all('p')[0].text) <= 1:
+                pass
+            else:
+                self.servings = clean_text(ingredients_tag.parent.find_all('p')[0].text)
             amounts = ingredients_tag.parent.find_all('p')[1:]
             amounts_list = [i.contents[0] if len(i)>0 else None for i in amounts]
             ingredients = ingredients_tag.parent.find_all('div')[1:]
@@ -128,8 +131,12 @@ class Recipe:
 
         # Pull number of servings
         servings_tag = self.soup.find('div', class_=re.compile('ingredients_recipeYield_*'))
-        self.servings = servings_tag.find_all('span',
+        servings_text = servings_tag.find_all('span',
                                               class_=re.compile('pantry--ui ingredients_fontOverride_*'))[0].text
+        if re.search(r'\d+$', servings_text):
+            self.servings = servings_text + 'Servings'
+        else:
+            self.servings = servings_text
 
         # Pull ingredients
         ingredients_list = self.soup.find("div", class_=re.compile("recipebody_ingredients-block_*")).find_all("li")

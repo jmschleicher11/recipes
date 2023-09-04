@@ -64,7 +64,8 @@ def generate_latex(recipe):
         doc.append(recipe.total_time)
 
     with doc.create(Section('Ingredients', numbering=False)):
-        doc.append(bold(recipe.servings))
+        if isinstance(recipe.servings, str):
+            doc.append(bold(recipe.servings))
         with doc.create(Itemize()) as itemize:
             for ingredient in recipe.ingredients:
                 itemize.add_item(NoEscape(create_latex_friendly_text(ingredient)))
