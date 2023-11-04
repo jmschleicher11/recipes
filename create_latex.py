@@ -17,6 +17,7 @@ def clean_fractions(text):
     text = re.sub("½", frac(1, 2), text)
     text = re.sub("1( |)/2", frac(1, 2), text)
     text = re.sub("⅔", frac(2, 3), text)
+    text = re.sub("²⁄₃", frac(2, 3), text)
     text = re.sub("2( |)/3", frac(2, 3), text)
     text = re.sub('¾', frac(3, 4), text)
     text = re.sub("3( |)/4", frac(3, 4), text)
@@ -24,18 +25,20 @@ def clean_fractions(text):
     text = re.sub("1( |)/8", frac(1, 8), text)
     text = re.sub('⅜', frac(3, 8), text)
     text = re.sub("3( |)/8", frac(3, 8), text)
+    text = re.sub('⅝', frac(5, 8), text)
+    text = re.sub("5( |)/8", frac(5, 8), text)
     return text
 
-def clean_degrees(text):
-    return re.sub("˚", r"$\\degree$", text)
-
-def clean_pound(text):
-    return re.sub("#", r"\\#", text)
+def clean_special_characters(text):
+    text = re.sub("˚", r"$\\degree$", text)
+    text = re.sub("#", r"\\#", text)
+    text = re.sub("&", r"\\&", text)
+    text = re.sub("ồ", "o", text)
+    return text
 
 def create_latex_friendly_text(text):
     text = clean_fractions(text)
-    text = clean_degrees(text)
-    text = clean_pound(text)
+    text = clean_special_characters(text)
     return text
 
 def generate_latex(recipe):
