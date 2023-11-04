@@ -96,11 +96,6 @@ def generate_latex(recipe):
 
 if __name__ == "__main__":
 
-    ## TODO: make graph database of the ingredients?!?!
-    ## TODO: pass folder as an argument (recipe type)
-    ## TODO: expand to incorporate freely entered or csv recipes somehow
-    ## TODO: extract ingredients list from BA & NYTC
-
     parser = argparse.ArgumentParser(description='Enter a recipe URL')
 
     parser.add_argument("--url", type=str, required=True, help="Bon Appetit, NY Times Cooking, or Serious Eats")
@@ -113,10 +108,3 @@ if __name__ == "__main__":
     generate_latex(selected_recipe)
     # Remove the downloaded recipe image
     os.remove(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'))
-
-    # Remove the soup property and save the recipe object
-    # selected_recipe.soup = None
-    # filename = re.sub(' ', '_', selected_recipe.title.lower()) + '.pkl'
-    # file_object = open(os.path.join(os.getcwd(), 'pickled_recipes', filename), 'wb')
-    # pickle.dump(selected_recipe, file_object)
-    # file_object.close()
