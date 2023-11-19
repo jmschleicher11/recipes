@@ -39,9 +39,10 @@ class Recipe:
         Pull html from website to parse recipe
         """
 
-        page = urlopen(self.url)
-        html = page.read().decode("utf-8")
-        self.soup = BeautifulSoup(html, "html.parser")
+        if self.source in ['Bon Appetit', "New York Times Cooking", 'Serious Eats']:
+            page = urlopen(self.url)
+            html = page.read().decode("utf-8")
+            self.soup = BeautifulSoup(html, "html.parser")
 
         if self.source == 'Bon Appetit':
             self.parse_bon_appetit()
@@ -49,7 +50,8 @@ class Recipe:
             self.parse_nyt_cooking()
         elif self.source == 'Serious Eats':
             self.parse_serious_eats()
-
+        else:
+            self.enter_information_manually()
 
     def parse_bon_appetit(self):
         """
@@ -236,3 +238,33 @@ class Recipe:
         # Pull image & save temporarily
         image_url = self.soup.find("figure").find("img")['src']
         urlretrieve(image_url, filename=os.path.join(os.getcwd(), 'pdfs', self.title + '.png'))
+
+    def enter_information_manually(self):
+
+        self.title = input("Enter title:")
+        self.active_time = input("Enter active time:")
+        self.total_time = input("Enter total time:")
+        self.servings = input("Enter number of servings:")
+
+        self.ingredients = collect_list_of_things("ingredients")
+
+        self.food_list = None
+
+        num_steps = input("Enter the number of steps")
+        steps_list = ['Step ' + str(i) for i in list(range(1, int(num_steps) + 1))]
+        do_ahead = input("Do ahead instructions? (y/n)")
+        if do_ahead == 'y':
+            steps_list.append("Do ahead")
+
+        self.steps = steps_list
+
+        self.instructions = collect_list_of_things("instructions")
+
+
+def collect_list_of_things(type_of_thing):
+    more = 'y'
+    thing_list = []
+    while more == 'y':
+        thing_list.append(input("Enter {}".format(type_of_thing)))
+        more = input("More {}? (y/n)".format(type_of_thing))
+    return thing_list
