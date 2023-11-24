@@ -86,6 +86,11 @@ def generate_latex(recipe):
             with doc.create(Subsection(recipe.steps[i], numbering=False)):
                 doc.append(NoEscape(create_latex_friendly_text(recipe.instructions[i])))
 
+    # Add optional notes
+    if recipe.my_notes:
+        with doc.create(Section('My Notes', numbering=False)):
+            doc.append(recipe.my_notes)
+
     # Add source URL
     with doc.create(Section('Source', numbering=False)):
         doc.append(recipe.url)
@@ -98,7 +103,6 @@ if __name__ == "__main__":
 
     ## TODO: make graph database of the ingredients?!?!
     ## TODO: pass folder as an argument (recipe type)
-    ## TODO: expand to incorporate freely entered or csv recipes somehow
     ## TODO: extract ingredients list from BA & NYTC
 
     parser = argparse.ArgumentParser(description='Enter a recipe URL')
@@ -112,14 +116,13 @@ if __name__ == "__main__":
 
     # Create the recipe object from the url and generate the pdf
     selected_recipe = Recipe(url=args.url, file=args.file, source=args.source)
-    generate_latex(selected_recipe)
-    # Remove the downloaded recipe image
-    os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'),
-              os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))
 
-    # Remove the soup property and save the recipe object
-    # selected_recipe.soup = None
-    # filename = re.sub(' ', '_', selected_recipe.title.lower()) + '.pkl'
-    # file_object = open(os.path.join(os.getcwd(), 'pickled_recipes', filename), 'wb')
-    # pickle.dump(selected_recipe, file_object)
-    # file_object.close()
+    if os.path.isfile(os.path.join(os.getcwd(), 'jsons', selected_recipe.title + '.json')):
+        user_says = input("This json file already exists. Overwrite? (y/n): ")
+        if user_says == 'y':
+            generate_latex(selected_recipe)
+            # Remove the downloaded recipe image
+            os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'),
+                      os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))
+        else:
+            print("Did not overwrite the json file.")
