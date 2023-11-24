@@ -28,7 +28,10 @@ class Recipe:
             self.food_list = recipe_dict['food_list']
             self.steps = recipe_dict['steps']
             self.instructions = recipe_dict['instructions']
-            self.my_notes = recipe_dict['my_notes']
+            if 'my_notes' in recipe_dict.keys():
+                self.my_notes = recipe_dict['my_notes']
+            else:
+                self.my_notes = None
 
             # Transfer file to pdf folder
             os.rename(os.path.join(os.getcwd(), 'images', self.title + '.png'),
