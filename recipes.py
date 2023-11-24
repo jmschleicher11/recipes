@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 from urllib.request import urlopen, urlretrieve
 import os
 import re
+import json
 
 def clean_text(text):
     text = re.sub('\n', ' ', text)
@@ -52,6 +53,9 @@ class Recipe:
             self.parse_serious_eats()
         else:
             self.enter_information_manually()
+
+        # Save json file
+        self.to_json()
 
     def parse_bon_appetit(self):
         """
@@ -260,6 +264,11 @@ class Recipe:
 
         self.instructions = collect_list_of_things("instructions")
 
+    def to_json(self):
+        recipe_dict = vars(self)
+        recipe_dict.pop('soup')
+        with open(os.path.join(os.getcwd(), 'jsons', self.title + '.json'), 'w', encoding='utf-8') as f:
+            json.dump(recipe_dict, f, ensure_ascii=False, indent=4)
 
 def collect_list_of_things(type_of_thing):
     more = 'y'

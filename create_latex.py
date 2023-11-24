@@ -100,19 +100,22 @@ if __name__ == "__main__":
     ## TODO: pass folder as an argument (recipe type)
     ## TODO: expand to incorporate freely entered or csv recipes somehow
     ## TODO: extract ingredients list from BA & NYTC
+    ## TODO: save photo and
 
     parser = argparse.ArgumentParser(description='Enter a recipe URL')
 
     parser.add_argument("--url", type=str, required=True, help="Bon Appetit, NY Times Cooking, or Serious Eats")
     parser.add_argument("--folder", type=str, )
+    parser.add_argument("--source", type=str, required=False, help="Source of recipe")
 
     args = parser.parse_args()
 
     # Create the recipe object from the url and generate the pdf
-    selected_recipe = Recipe(args.url)
+    selected_recipe = Recipe(args.url, args.source)
     generate_latex(selected_recipe)
     # Remove the downloaded recipe image
-    os.remove(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'))
+    os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'),
+              os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))
 
     # Remove the soup property and save the recipe object
     # selected_recipe.soup = None
