@@ -269,7 +269,10 @@ class Recipe:
         self.instructions = instructions
 
         # Pull image & save temporarily
-        image_url = self.soup.find("figure").find("img")['src']
+        try:
+            image_url = self.soup.find("figure").find("img")['src']
+        except:
+            image_url = self.soup.find("figure").find("img")['data-src']
         urlretrieve(image_url, filename=os.path.join(os.getcwd(), 'pdfs', self.title + '.png'))
 
     def enter_information_manually(self):
