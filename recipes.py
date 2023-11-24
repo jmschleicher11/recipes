@@ -14,26 +14,48 @@ def clean_text(text):
 
 class Recipe:
 
-    def __init__(self, url, source=""):
-        self.url = url
-        if "bonappetit" in self.url:
-            self.source = "Bon Appetit"
-        elif "nytimes" in self.url:
-            self.source = "New York Times Cooking"
-        elif "seriouseats" in self.url:
-            self.source = "Serious Eats"
+    def __init__(self, url="", file="", source=""):
+
+        if file:
+            recipe_dict = json.load(open(os.path.join(os.getcwd(), 'jsons', file + '.json')))
+            self.url = recipe_dict['url']
+            self.source = recipe_dict['source']
+            self.title = recipe_dict['title']
+            self.active_time = recipe_dict['active_time']
+            self.total_time = recipe_dict['total_time']
+            self.servings = recipe_dict['servings']
+            self.ingredients = recipe_dict['ingredients']
+            self.food_list = recipe_dict['food_list']
+            self.steps = recipe_dict['steps']
+            self.instructions = recipe_dict['instructions']
+
+            # Transfer file to pdf folder
+            os.rename(os.path.join(os.getcwd(), 'images', self.title + '.png'),
+                      os.path.join(os.getcwd(), 'pdfs', self.title + '.png'))
+
         else:
-            self.source = source
-        self.title = None
-        self.active_time = None
-        self.total_time = None
-        self.soup = None
-        self.servings = None
-        self.ingredients = None
-        self.food_list = None
-        self.steps = None
-        self.instructions = None
-        self.pull_data()
+            self.url = url
+            if "bonappetit" in self.url:
+                self.source = "Bon Appetit"
+            elif "nytimes" in self.url:
+                self.source = "New York Times Cooking"
+            elif "seriouseats" in self.url:
+                self.source = "Serious Eats"
+            else:
+                self.source = source
+            self.title = None
+            self.active_time = None
+            self.total_time = None
+            self.soup = None
+            self.servings = None
+            self.ingredients = None
+            self.food_list = None
+            self.steps = None
+            self.instructions = None
+            self.pull_data()
+
+        # Save json file
+        self.to_json()
 
     def pull_data(self):
         """
@@ -53,9 +75,6 @@ class Recipe:
             self.parse_serious_eats()
         else:
             self.enter_information_manually()
-
-        # Save json file
-        self.to_json()
 
     def parse_bon_appetit(self):
         """
@@ -266,7 +285,8 @@ class Recipe:
 
     def to_json(self):
         recipe_dict = vars(self)
-        recipe_dict.pop('soup')
+        if 'soup' in recipe_dict.keys():
+            recipe_dict.pop('soup')
         with open(os.path.join(os.getcwd(), 'jsons', self.title + '.json'), 'w', encoding='utf-8') as f:
             json.dump(recipe_dict, f, ensure_ascii=False, indent=4)
 
