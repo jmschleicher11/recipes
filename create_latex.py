@@ -4,7 +4,6 @@ from pylatex import Document, Section, Subsection, Itemize, Command, NoEscape, P
 from pylatex.utils import bold
 import os
 import argparse
-import pickle
 
 def frac(a, b):
     return r'$\\frac{'+str(a)+'}{'+str(b)+'}$'
@@ -102,22 +101,27 @@ def generate_latex(recipe):
 if __name__ == "__main__":
 
     ## TODO: make graph database of the ingredients?!?!
-    ## TODO: pass folder as an argument (recipe type)
     ## TODO: extract ingredients list from BA & NYTC
 
     parser = argparse.ArgumentParser(description='Enter a recipe URL')
 
     parser.add_argument("--url", type=str, required=False, help="Bon Appetit, NY Times Cooking, or Serious Eats")
     parser.add_argument("--file", type=str, required=False, help="Filename of existing recipe")
-    parser.add_argument("--folder", type=str, )
+    parser.add_argument("--type", type=str, required=False, help="Type of dish")
     parser.add_argument("--source", type=str, required=False, help="Source of recipe")
 
     args = parser.parse_args()
 
     # Create the recipe object from the url and generate the pdf
-    selected_recipe = Recipe(url=args.url, file=args.file, source=args.source)
+    selected_recipe = Recipe(url=args.url, file=args.file, source=args.source, type=args.type)
 
     generate_latex(selected_recipe)
+
+    if args.type:
+        if not os.path.exists(os.path.join(os.getcwd(), 'pdfs', args.type)):
+            os.mkdir(os.path.join(os.getcwd(), 'pdfs', args.type))
+        os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.pdf'),
+                  os.path.join(os.getcwd(), 'pdfs', args.type, selected_recipe.title + '.pdf'))
     # Remove the downloaded recipe image
     os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'),
-          os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))
+              os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))

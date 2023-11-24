@@ -14,7 +14,7 @@ def clean_text(text):
 
 class Recipe:
 
-    def __init__(self, url="", file="", source=""):
+    def __init__(self, url="", file="", source="", type=""):
 
         if file:
             recipe_dict = json.load(open(os.path.join(os.getcwd(), 'jsons', file + '.json')))
@@ -32,6 +32,10 @@ class Recipe:
                 self.my_notes = recipe_dict['my_notes']
             else:
                 self.my_notes = None
+            if 'type' in recipe_dict.keys():
+                self.type = recipe_dict['type']
+            else:
+                self.type = None
 
             # Transfer file to pdf folder
             os.rename(os.path.join(os.getcwd(), 'images', self.title + '.png'),
@@ -47,6 +51,7 @@ class Recipe:
                 self.source = "Serious Eats"
             else:
                 self.source = source
+            self.type = type
             self.title = None
             self.active_time = None
             self.total_time = None
@@ -299,6 +304,13 @@ class Recipe:
                     json.dump(recipe_dict, f, ensure_ascii=False, indent=4)
             else:
                 print("Did not overwrite the json file.")
+        else:
+            recipe_dict = vars(self)
+            if 'soup' in recipe_dict.keys():
+                recipe_dict.pop('soup')
+            with open(os.path.join(os.getcwd(), 'jsons', self.title + '.json'), 'w', encoding='utf-8') as f:
+                json.dump(recipe_dict, f, ensure_ascii=False, indent=4)
+
 
 
 def collect_list_of_things(type_of_thing):
