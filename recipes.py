@@ -56,6 +56,7 @@ class Recipe:
             self.food_list = None
             self.steps = None
             self.instructions = None
+            self.my_notes = None
             self.pull_data()
 
         # Save json file
@@ -288,11 +289,17 @@ class Recipe:
         self.instructions = collect_list_of_things("instructions")
 
     def to_json(self):
-        recipe_dict = vars(self)
-        if 'soup' in recipe_dict.keys():
-            recipe_dict.pop('soup')
-        with open(os.path.join(os.getcwd(), 'jsons', self.title + '.json'), 'w', encoding='utf-8') as f:
-            json.dump(recipe_dict, f, ensure_ascii=False, indent=4)
+        if os.path.isfile(os.path.join(os.getcwd(), 'jsons', self.title + '.json')):
+            user_says = input("This json file already exists. Overwrite? (y/n): ")
+            if user_says == 'y':
+                recipe_dict = vars(self)
+                if 'soup' in recipe_dict.keys():
+                    recipe_dict.pop('soup')
+                with open(os.path.join(os.getcwd(), 'jsons', self.title + '.json'), 'w', encoding='utf-8') as f:
+                    json.dump(recipe_dict, f, ensure_ascii=False, indent=4)
+            else:
+                print("Did not overwrite the json file.")
+
 
 def collect_list_of_things(type_of_thing):
     more = 'y'

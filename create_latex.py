@@ -117,12 +117,7 @@ if __name__ == "__main__":
     # Create the recipe object from the url and generate the pdf
     selected_recipe = Recipe(url=args.url, file=args.file, source=args.source)
 
-    if os.path.isfile(os.path.join(os.getcwd(), 'jsons', selected_recipe.title + '.json')):
-        user_says = input("This json file already exists. Overwrite? (y/n): ")
-        if user_says == 'y':
-            generate_latex(selected_recipe)
-            # Remove the downloaded recipe image
-            os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'),
-                      os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))
-        else:
-            print("Did not overwrite the json file.")
+    generate_latex(selected_recipe)
+    # Remove the downloaded recipe image
+    os.rename(os.path.join(os.getcwd(), 'pdfs', selected_recipe.title + '.png'),
+          os.path.join(os.getcwd(), 'images', selected_recipe.title + '.png'))
