@@ -277,24 +277,29 @@ class Recipe:
 
     def enter_information_manually(self):
 
-        self.title = input("Enter title:")
-        self.active_time = input("Enter active time:")
-        self.total_time = input("Enter total time:")
-        self.servings = input("Enter number of servings:")
+        self.title = input("Enter title: ")
+        self.active_time = input("Enter active time: ")
+        self.total_time = input("Enter total time: ")
+        self.servings = input("Enter number of servings: ")
 
         self.ingredients = collect_list_of_things("ingredients")
 
         self.food_list = None
 
-        num_steps = input("Enter the number of steps")
+        num_steps = input("Enter the number of steps: ")
         steps_list = ['Step ' + str(i) for i in list(range(1, int(num_steps) + 1))]
-        do_ahead = input("Do ahead instructions? (y/n)")
+        do_ahead = input("Do ahead instructions? (y/n): ")
         if do_ahead == 'y':
             steps_list.append("Do ahead")
 
         self.steps = steps_list
 
-        self.instructions = collect_list_of_things("instructions")
+        instruction_list = collect_list_of_things("instructions")
+
+        if len(steps_list) != len(instruction_list):
+            print("There are not the same number of steps and instructions")
+
+        self.instructions = instruction_list
 
     def to_json(self):
         if os.path.isfile(os.path.join(os.getcwd(), 'jsons', self.title + '.json')):
@@ -319,7 +324,7 @@ class Recipe:
 def collect_list_of_things(type_of_thing):
     more = 'y'
     thing_list = []
-    while more == 'y':
-        thing_list.append(input("Enter {}".format(type_of_thing)))
+    while more != 'n':
+        thing_list.append(input("Enter {}: ".format(type_of_thing)))
         more = input("More {}? (y/n)".format(type_of_thing))
     return thing_list
