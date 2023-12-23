@@ -1,6 +1,6 @@
 from recipes import Recipe
 import re
-from pylatex import Document, Section, Subsection, Itemize, Command, NoEscape, Package, Figure
+from pylatex import Document, Section, Subsection, Itemize, Command, NoEscape, Package, Figure, NewLine
 from pylatex.utils import bold
 import os
 import argparse
@@ -75,9 +75,18 @@ def generate_latex(recipe):
     with doc.create(Section('Ingredients', numbering=False)):
         if isinstance(recipe.servings, str):
             doc.append(bold(recipe.servings))
-        with doc.create(Itemize()) as itemize:
-            for ingredient in recipe.ingredients:
-                itemize.add_item(NoEscape(create_latex_friendly_text(ingredient)))
+        if isinstance(recipe.ingredients, list):
+            with doc.create(Itemize()) as itemize:
+                for ingredient in recipe.ingredients:
+                    itemize.add_item(NoEscape(create_latex_friendly_text(ingredient)))
+        else:
+            doc.append(NewLine())
+            for group, ingredient_list in recipe.ingredients.items():
+                doc.append(bold(group))
+                with doc.create(Itemize()) as itemize:
+                    for ingredient in ingredient_list:
+                        itemize.add_item(NoEscape(create_latex_friendly_text(ingredient)))
+
 
     # Add preparation steps
     with doc.create(Section('Preparation', numbering=False)):
@@ -91,8 +100,9 @@ def generate_latex(recipe):
             doc.append(recipe.my_notes)
 
     # Add source URL
-    with doc.create(Section('Source', numbering=False)):
-        doc.append(recipe.url)
+    if recipe.url:
+        with doc.create(Section('Source', numbering=False)):
+            doc.append(recipe.url)
 
     # Generate and save the final pdf document
     doc.generate_pdf(filepath=str(os.path.join(os.getcwd(), 'pdfs', recipe.title)), clean_tex=True)
@@ -102,6 +112,7 @@ if __name__ == "__main__":
 
     ## TODO: make graph database of the ingredients?!?!
     ## TODO: extract ingredients list from BA & NYTC
+    ## TODO: add option for grouped ingredients for different components
 
     parser = argparse.ArgumentParser(description='Enter a recipe URL')
 
