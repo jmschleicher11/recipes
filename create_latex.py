@@ -33,6 +33,7 @@ def clean_special_characters(text):
     text = re.sub("#", r"\\#", text)
     text = re.sub("&", r"\\&", text)
     text = re.sub("ồ", "o", text)
+    text = re.sub("%", r"\\%", text)
     return text
 
 def create_latex_friendly_text(text):
@@ -81,6 +82,7 @@ def generate_latex(recipe):
                 for ingredient in recipe.ingredients:
                     itemize.add_item(NoEscape(create_latex_friendly_text(ingredient)))
         else:
+            doc.append(NewLine())
             doc.append(NewLine())
             for group, ingredient_list in recipe.ingredients.items():
                 doc.append(bold(group))

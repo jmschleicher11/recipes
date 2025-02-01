@@ -217,20 +217,34 @@ class Recipe:
         self.title = self.soup.title.text.replace(" Recipe", "")
 
         # Find active and total times and servings
-        active_tag = self.soup.find("div", class_="loc active-time project-meta__active-time")
-        total_tag = self.soup.find("div", class_="loc total-time project-meta__total-time")
-        serving_tag = self.soup.find("div", class_="loc recipe-serving project-meta__recipe-serving")
-        self.active_time = clean_text(active_tag.find(class_="meta-text__data").text)
+        if self.soup.find("div", class_="active-time project-meta__active-time"):
+            active_tag = self.soup.find("div", class_="active-time project-meta__active-time")
+            self.active_time = clean_text(active_tag.find(class_="meta-text__data").text)
+        total_tag = self.soup.find("div", class_="total-time project-meta__total-time")
+        serving_tag = self.soup.find("div", class_="recipe-serving project-meta__recipe-serving")
         self.total_time = clean_text(total_tag.find(class_="meta-text__data").text)
         self.servings = clean_text(serving_tag.find(class_="meta-text__data").text)
 
         # Get the ingredients from the recipe
-        ingredients = []
+
         food_list = []
-        ingredients_list = self.soup.find("ul", class_="structured-ingredients__list text-passage").find_all("p")
-        for ingredient in ingredients_list:
-            ingredients.append(ingredient.text)
-            food_list.append(ingredient.find("span", {"data-ingredient-name": "true"}).text.lower())
+        if len(self.soup.find_all("ul", class_="structured-ingredients__list text-passage")) == 1:
+            ingredients = []
+            ingredients_list = self.soup.find("ul", class_="structured-ingredients__list text-passage").find_all("p")
+            for ingredient in ingredients_list:
+                ingredients.append(ingredient.text)
+                food_list.append(ingredient.find("span", {"data-ingredient-name": "true"}).text.lower())
+        else:
+            ingredients = {}
+            ingredients_headers = [heading.text for heading in
+                                   self.soup.find_all("p", class_="structured-ingredients__list-heading")]
+            ingredients_lists = [section_list.find_all("p") for section_list in
+                                 self.soup.find_all("ul", class_="structured-ingredients__list text-passage")]
+            clean_ingredients_lists = []
+            for ingredient_sublist in ingredients_lists:
+                clean_ingredients_lists.append([ingredient.text for ingredient in ingredient_sublist])
+            ingredients = {ingredient_group: ingredient_list for ingredient_group, ingredient_list in zip(
+                ingredients_headers, clean_ingredients_lists)}
 
         self.ingredients = ingredients
         self.food_list = food_list
@@ -238,7 +252,8 @@ class Recipe:
         instructions = []
         step_numbers = []
         step_index = 1
-        instructions_tag = self.soup.find("ol", class_="comp mntl-sc-block-group--OL mntl-sc-block mntl-sc-block-startgroup")
+
+        instructions_tag = self.soup.find("ol", class_="comp mntl-sc-block mntl-sc-block-startgroup mntl-sc-block-group--OL")
         instruction_list = instructions_tag.find_all("p", class_="comp mntl-sc-block mntl-sc-block-html")
         for instruction in instruction_list:
             instructions.append(clean_text(instruction.text))
@@ -309,6 +324,8 @@ class Recipe:
         if os.path.exists(os.path.join(os.getcwd(), "images", self.title + ".png")):
             os.rename(os.path.join(os.getcwd(), "images", self.title + ".png"),
                       os.path.join(os.getcwd(), "pdfs", self.title + ".png"))
+        elif os.path.exists(os.path.join(os.getcwd(), "pdfs", self.title + ".png")):
+            pass
         else:
             print("Save an image of the recipe in the pdf directory")
 
