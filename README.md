@@ -28,9 +28,10 @@ recipe (recipe name, time, ingredients, preparation steps, etc.), save a picture
 ## To test
 Unit tests to ensure data are correctly scraped and pulled from websites are in the `tests/` directory. These can be
 run from the main `recipes/` directory (with the `recipes` environment activated) by running:
->pytest
+>pytest -s
 
-Note: there are intentional random delays between each website being scraped.  
+Note: there are intentional random delays between each website being scraped. It also automatically does not replace
+the json file, which normally asks the user for input.
 
 ## Final note: 
 I have subscriptions to the websites this code pulls information from (or they are available free to the public) and 
