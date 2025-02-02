@@ -122,9 +122,6 @@ def generate_latex(recipe):
 
 if __name__ == "__main__":
 
-    ## TODO: make graph database of the ingredients?!?!
-    ## TODO: extract ingredients list from BA & NYTC
-
     parser = argparse.ArgumentParser(description="Enter a recipe URL")
 
     parser.add_argument("--url", type=str, required=False, help="Bon Appetit, NY Times Cooking, or Serious Eats")
