@@ -1,12 +1,15 @@
 import unittest
+from unittest.mock import patch
 import time
 import random
 import os
+import builtins
 
 from recipes import Recipe
 
 class BonAppetitTesting(unittest.TestCase):
     @classmethod
+    @unittest.mock.patch.object(builtins, "input", lambda _: 'n')
     def setUpClass(self):
         self.pasta = Recipe("https://www.bonappetit.com/recipe/jammy-onion-and-miso-pasta")
         time.sleep(random.randrange(1, 6) + random.random())
@@ -73,7 +76,7 @@ class BonAppetitTesting(unittest.TestCase):
         self.assertEqual(len(self.cake.ingredients), 21)
         self.assertEqual(len(self.bread.ingredients), 5)
         self.assertEqual(len(self.pancake.ingredients), 13)
-        self.assertEqual(len(self.aloo.ingredients), 12)
+        self.assertEqual(len(self.aloo.ingredients), 13)
 
     def test_do_ahead_handling_in_steps(self):
         # No "Do ahead"
@@ -119,6 +122,7 @@ class BonAppetitTesting(unittest.TestCase):
 
 class NYTimesCookingTesting(unittest.TestCase):
     @classmethod
+    @unittest.mock.patch.object(builtins, "input", lambda _: 'n')
     def setUpClass(self):
         self.pasta = Recipe("https://cooking.nytimes.com/recipes/1023328-pasta-salad")
         time.sleep(random.randrange(1, 6) + random.random())
@@ -141,7 +145,7 @@ class NYTimesCookingTesting(unittest.TestCase):
         self.assertEqual(self.soup.source, "New York Times Cooking")
 
     def test_title(self):
-        self.assertEqual(self.pasta.title, "Pasta Salad")
+        self.assertEqual(self.pasta.title, "Pasta Salad (with Video)")
         self.assertEqual(self.dutch_bb.title, "Goat Cheese and Dill Dutch Baby")
         self.assertEqual(self.soup.title, "Thomas Keller’s Butternut Squash Soup With Brown Butter")
 

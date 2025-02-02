@@ -101,23 +101,39 @@ class Recipe:
 
         # Pull ingredients & preparations tags
         ingredients_tag = None
+        servings_tag = None
         preparation_tag = None
 
         for i in range(len(self.soup.find_all("h2"))):
             if self.soup.find_all("h2")[i].text == "Ingredients":
                 ingredients_tag = self.soup.find_all("h2")[i]
+            elif self.soup.find_all("h2")[i].text == "Recipe information":
+                servings_tag = self.soup.find_all("h2")[i]
             elif self.soup.find_all("h2")[i].text == "Preparation":
                 preparation_tag = self.soup.find_all("h2")[i]
             else:
                 pass
 
+        # Pull servings
+        if servings_tag:
+            if len(servings_tag.parent.find_all("p")) == 2:
+                self.servings = clean_text(servings_tag.parent.find_all("p")[1].text)
+            elif len(servings_tag.parent.find_all("p")) == 4:
+                self.servings = clean_text(servings_tag.parent.find_all("p")[3].text)
+            else:
+                pass
+        else:
+            pass
+
         # Create ingredients list
         if ingredients_tag:
-            if len(ingredients_tag.parent.find_all("p")[0].text) <= 1:
-                pass
-            else:
-                self.servings = clean_text(ingredients_tag.parent.find_all("p")[0].text)
-            amounts = ingredients_tag.parent.find_all("p")[1:]
+            # if len(ingredients_tag.parent.find_all("p")[0].text) <= 1:
+            #     starting_index = 0
+            #     pass
+            # else:
+            #     self.servings = clean_text(ingredients_tag.parent.find_all("p")[0].text)
+            #     starting_index = 1
+            amounts = ingredients_tag.parent.find_all("p")[0:]
             amounts_list = [i.contents[0] if len(i)>0 else None for i in amounts]
             ingredients = ingredients_tag.parent.find_all("div")[1:]
             ingredients_list = [i.text if len(i)>0 else None for i in ingredients]
